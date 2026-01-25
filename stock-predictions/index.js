@@ -1,4 +1,4 @@
-import { dates } from '/utils/dates'
+import { dates } from './utils/dates'
 
 const tickersArr = []
 
@@ -71,3 +71,4 @@ function renderReport(output) {
     report.textContent = output
     outputArea.style.display = 'flex'
 }
+
