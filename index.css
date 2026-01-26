@@ -48,6 +48,7 @@ main {
     align-items: center;
     font-size: 2em;
     color: #ffeead;
+    text-decoration: none;
 }
 
 .wide {
@@ -58,4 +59,35 @@ main {
     border: 5px solid rgb(71, 201, 108);
     border-radius: 10px;
     transition: 0.2s;
+}
+
+.project a.pollyglot-thumb {
+    position: relative;
+    background: url('/PollyGlot/assets/worldmap.png') center/cover no-repeat;
+    border-radius: 5px;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+.project a.pollyglot-thumb img.parrot {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -70%);
+    width: 40%;
+    height: auto;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.project a.pollyglot-thumb p.pollyglot-text {
+    position: absolute;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: green;
+    left: 50%;
+    top: 50%;
+    transform: translate(-40%, 30%);
+    height: auto;
+    width: 40%;
+    object-fit: contain;
 }
