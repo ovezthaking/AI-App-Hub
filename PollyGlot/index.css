@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Big Shoulders Display';
+}
+
+.container {
+    width: 390px;
+    margin: 20px auto;
+}
+
+header {
+    background: url('assets/worldmap.png') center/cover no-repeat;
+    height: 20vh;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5em;
+}
+
+header > img {
+    width: 100px;
+    height: auto;
+    float: left;
+}
+
+header > div.header-text > h1 {
+    color: #32CD32;
+    margin: 0 0 0.2em 0;
+}
+
+header > div.header-text > p {
+    color: white;
+    margin: 0;
+}
