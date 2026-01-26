@@ -33,7 +33,6 @@ main {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 5px;
 }
 
 .project > a {
@@ -90,4 +89,5 @@ main {
     height: auto;
     width: 40%;
     object-fit: contain;
+    text-shadow: 1px 1px 3px limegreen;
 }
