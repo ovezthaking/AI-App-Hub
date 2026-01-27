@@ -6,7 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>PollyGlot</title>
         <link rel="stylesheet" href="index.css">
-        <link href='https://fonts.googleapis.com/css?family=Big Shoulders Display' rel='stylesheet'>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Play:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Smythe&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
     </head>
     <body>
         <div class="container">
@@ -26,13 +28,19 @@
                 <p>Select language 👇</p>
 
                 <form action="" method="post">
-                    <input type="radio" name="language" id="french" value="french">
-                    <label for="french">French</label>
-                    <input type="radio" name="language" id="spanish" value="spanish">
-                    <label for="spanish">Spanish</label>
-                    <input type="radio" name="language" id="japanese" value="japanese">
-                    <label for="spanish">Spanish</label>
-
+                    <div class="lang-radios">
+                        <input type="radio" name="language" id="french" value="french">
+                        <label for="french">French</label>
+                    </div>
+                    <div class="lang-radios">
+                        <input type="radio" name="language" id="spanish" value="spanish">
+                        <label for="spanish">Spanish</label>
+                    </div class="lang-radios">
+                    <div>
+                        <input type="radio" name="language" id="japanese" value="japanese">
+                        <label for="spanish">Spanish</label>
+                    </div>
+                    
                     <input type="submit" value="Translate">
                 </form>
             </main>
