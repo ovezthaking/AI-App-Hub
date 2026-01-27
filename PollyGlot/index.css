@@ -10,7 +10,7 @@ html, body {
 
 .container {
     width: 390px;
-    margin: 20px auto;
+    margin: 5px auto;
 }
 
 header {
@@ -38,4 +38,12 @@ header > div.header-text > h1 {
 header > div.header-text > p {
     color: white;
     margin: 0;
+}
+
+main {
+    margin: 1.8em auto;
+    height: 70vh;
+    width: 93%;
+    border: 5px solid #252F42;
+    border-radius: 15px;
 }
