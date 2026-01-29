@@ -85,7 +85,7 @@ main {
     color: green;
     left: 50%;
     top: 50%;
-    transform: translate(-40%, 30%);
+    transform: translate(-50%, 30%);
     height: auto;
     width: 40%;
     object-fit: contain;
