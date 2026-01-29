@@ -25,9 +25,9 @@
                 
                 <textarea name="translate-text" id="translate-text" placeholder="How are you?"></textarea>
 
-                <p>Select language 👇</p>
+                <p class="changing-text">Select language 👇</p>
 
-                <form action="" method="post">
+                <form>
                     <div class="lang-radios">
                         <input type="radio" name="language" id="french" value="french">
                         <label for="french">French</label>
@@ -43,7 +43,9 @@
                         <label for="japanese">Japanese</label>
                         <img src="assets/jpn-flag.png" alt="Japanese flag">
                     </div>
-                    
+
+                    <textarea name="translated-text" id="translated-text" disabled></textarea>
+
                     <input class="translate-btn" type="submit" value="Translate">
                 </form>
             </main>

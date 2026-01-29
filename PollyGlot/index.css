@@ -70,7 +70,7 @@ main > form {
     align-items: center;
 }
 
-main > textarea {
+main > textarea, main > form > textarea {
     background-color: #EFF0F4;
     border-radius: 8px;
     border: none;
@@ -91,6 +91,11 @@ main > form img {
 
 main > form > .lang-radios {
     width: 50%;
+}
+
+main > form > textarea {
+    color: black;
+    display: none;
 }
 
 main > form > .translate-btn {
