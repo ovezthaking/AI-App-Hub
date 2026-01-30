@@ -11,6 +11,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: lightgray;
+    
 }
 
 header {
@@ -22,6 +23,7 @@ header {
 
 main {
     width: 100%;
+    justify-content: center;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 20vw));
     gap: 1em;
