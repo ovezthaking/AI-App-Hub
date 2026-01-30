@@ -14,6 +14,8 @@
   },
   "dependencies": {
     "@huggingface/inference": "^4.13.11",
+    "@langchain/core": "^1.1.17",
+    "@langchain/textsplitters": "^1.0.1",
     "@openrouter/sdk": "^0.4.0",
     "@supabase/supabase-js": "^2.93.3",
     "cors": "^2.8.6",
