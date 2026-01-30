@@ -1,4 +1,4 @@
-import { openrouter, supabase } from "./config";
+import { supabase, hf } from "./config";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 
@@ -70,19 +70,12 @@ async function createAndStoreEmbeddings() {
 
 
 async function getEmbeddings(text, model='sentence-transformers/paraphrase-multilingual-mpnet-base-v2') {
-  const response = await fetch('http://localhost:3000/api/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ text, model }),
+  const embeddingResponse = await hf.featureExtraction({
+    model: model,
+    inputs: text
   });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return await response.json();
+  
+  return { embeddings: embeddingResponse };
 }
 
 
@@ -113,10 +106,10 @@ async function getChatCompletion(text, query) {
         content: `Context: ${text} Question: ${query}`
     })
 
-    const response = await openrouter.chat.send({
-        model: "tngtech/deepseek-r1t2-chimera:free",
+    const response = await hf.chatCompletion({
+        model: "zai-org/GLM-4.7-Flash",
         messages: chatMessages,
-        frequencyPenalty: 0.5,
+        frequency_penalty: 0.5,
         temperature: 0.5
     })
 
