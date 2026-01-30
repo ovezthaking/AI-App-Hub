@@ -1,33 +1,22 @@
-import { supabase, openrouter } from "./config"
+import { supabase, openrouter, hf } from "./config"
 import podcasts from './content.js'
 
 
 const query = "An episode Elon Musk would enjoy"
 
 async function main(input) {
-  const result = await getEmbeddings(
-    input,
-    "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-  )
-  const embedding = await result.embeddings
+  const embedding = await createEmbedding(input)
   const match = await matchEmbeddings(embedding)
   await getChatCompletion(match, input)
 }
 
-async function getEmbeddings(text, model) {
-  const response = await fetch('http://localhost:3000/api/embeddings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ text, model }),
+async function createEmbedding(input) {
+  const embeddingResponse = await hf.featureExtraction({
+    model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    inputs: input
   });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return await response.json();
+  
+  return embeddingResponse;
 }
 
 
@@ -88,10 +77,10 @@ async function getChatCompletion(text, query) {
     content: `Context: ${text} Question: ${query}`
   })
 
-  const response = await openrouter.chat.send({
-      model: "tngtech/deepseek-r1t2-chimera:free",
+  const response = await hf.chatCompletion({
+      model: "zai-org/GLM-4.7-Flash",
       messages: chatMessages,
-      frequencyPenalty: 0.5,
+      frequency_penalty: 0.5,
       temperature: 0.5
   })
 
