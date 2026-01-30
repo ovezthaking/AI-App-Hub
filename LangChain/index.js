@@ -1,7 +1,21 @@
 import { openrouter, supabase } from "./config";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-const document = await fetch('./movies.txt').then(res => res.text())
+
+const query = "I feel like having a good laugh!"
+main(query)
+
+
+async function main(input) {
+    const result = await getEmbeddings(
+        input,
+        "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+    )
+
+    const embedding = await result.embeddings
+    const match = await findNearestMatch(embedding)
+    await getChatCompletion(match, input)
+}
 
 async function splitDocument(document) {
     try {
@@ -47,7 +61,7 @@ async function createAndStoreEmbeddings() {
         // if (error) {
         //     throw new Error('Issue inserting data into the database.');
         // }
-        
+
         console.log('success')
     } catch (e) {
         console.error('Error: ', e.message)
@@ -72,4 +86,40 @@ async function getEmbeddings(text, model='sentence-transformers/paraphrase-multi
 }
 
 
-createAndStoreEmbeddings()
+async function findNearestMatch(embedding) {
+    const { data } = await supabase.rpc('match_movies', {
+        query_embedding: embedding,
+        match_threshold: 0.20,
+        match_count: 4
+    })
+
+    const match = data.map(obj => obj.content).join('\n')
+    console.log('Match: \n' + match + '\n')
+    return data.length ? match : 'no info'
+}
+
+const chatMessages = [{
+    role: 'system',
+    content: `You are an enthusiastic movie expert who loves recommending movies to people.
+    You will be given two pieces of information - some context about movies and a question.
+    Your main job is to formulate a short answer to the question using the provided context.
+    If you are unsure and cannot find the answer in the context, say,
+    "Sorry, I don't know the answer." Please do not make up the answer.` 
+}];
+
+async function getChatCompletion(text, query) {
+    chatMessages.push({
+        role: 'user',
+        content: `Context: ${text} Question: ${query}`
+    })
+
+    const response = await openrouter.chat.send({
+        model: "tngtech/deepseek-r1t2-chimera:free",
+        messages: chatMessages,
+        frequencyPenalty: 0.5,
+        temperature: 0.5
+    })
+
+    console.log(response.choices[0].message.content)
+    document.querySelector('body').innerHTML = `<p>${response.choices[0].message.content}</p>`
+}
