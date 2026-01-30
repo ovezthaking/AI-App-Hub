@@ -1,4 +1,4 @@
-import { supabase, openrouter, hf } from "./config"
+import { supabase, hf } from "./config"
 import podcasts from './content.js'
 
 
