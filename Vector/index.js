@@ -48,7 +48,7 @@ async function main(input) {
 
 // main(podcasts)
 
-const query = "Jammin' in the Big Easy"
+const query = "What can I listen to in half an hour?"
 
 async function matchEmbeddings(input) {
   const result = await getEmbeddings(
@@ -58,9 +58,9 @@ async function matchEmbeddings(input) {
 
   const embedding = result.embeddings
 
-  const data = await supabase.rpc('match_documents', {
+  const { data } = await supabase.rpc('match_documents', {
     query_embedding: embedding,
-    match_threshold: 0.35,
+    match_threshold: 0.29,
     match_count: 1
   })
 
