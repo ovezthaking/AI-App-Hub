@@ -24,6 +24,8 @@ async function getEmbeddings(text, model) {
 //   "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
 // );
 
+
+
 async function main(input) {
   const data = await Promise.all(
     input.map( async (textChunk) => {
@@ -44,4 +46,25 @@ async function main(input) {
   console.log('Embedding complete!');
 }
 
-main(podcasts)
+// main(podcasts)
+
+const query = "Jammin' in the Big Easy"
+
+async function matchEmbeddings(input) {
+  const result = await getEmbeddings(
+    input,
+    "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+  );
+
+  const embedding = result.embeddings
+
+  const data = await supabase.rpc('match_documents', {
+    query_embedding: embedding,
+    match_threshold: 0.35,
+    match_count: 1
+  })
+
+  console.log(data)
+}
+
+matchEmbeddings(query)
