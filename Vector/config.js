@@ -1,9 +1,9 @@
 import { createClient } from "@supabase/supabase-js"
 import { InferenceClient } from "@huggingface/inference";
 
-const privateKey = import.meta.env.VITE_VECTOR_SUPABASE_API_KEY;
+const privateKey = import.meta.env.VITE_SUPABASE_API_KEY;
 if (!privateKey) throw new Error(`Expected env var VITE_SUPABASE_API_KEY`);
-const url = import.meta.env.VITE_VECTOR_SUPABASE_URL;
+const url = import.meta.env.VITE_SUPABASE_URL;
 if (!url) throw new Error(`Expected env var VITE_SUPABASE_URL`);
 export const supabase = createClient(url, privateKey);
 
