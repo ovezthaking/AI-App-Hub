@@ -42,6 +42,41 @@ const splitDocument = async (document) => {
 }
 
 
+const storeDocumentEmbeddings = async (document) => {
+    try {
+        const chunkData = await splitDocument(document)
+
+        const data = await Promise.all(
+            chunkData.map( async (chunk) => {
+    
+                const embeddingResponse = await createEmbedding(chunk.pageContent)
+    
+                return {
+                    content: chunk.pageContent,
+                    embedding: embeddingResponse
+                }
+            })
+        )
+
+        if (!data) {
+            throw new Error('No data in array')
+        }
+        
+        console.log(data)
+        const { error } = await supabase.from('popchoice').insert(data)
+
+        if (error) {
+            throw new Error('Issue inserting data into the database.')
+        }
+
+        console.log('Embeddings inserted!')
+    } catch (err) {
+        console.error('Error: ', err)
+    }
+}
+
+// storeDocumentEmbeddings('movies.txt')
+
 const storeJsEmbeddings = async (input) => {
     try {
         const data = await Promise.all(
@@ -89,7 +124,7 @@ const findNearestMatch = async (embedding) => {
         }
 
         const match = data.map(obj => obj.content).join('\n')
-        console.log(data)
+        // console.log(data)
         return match
     } catch (err) {
         console.error('Error: ', err)
@@ -131,7 +166,7 @@ const getChatCompletion = async (text, query) => {
             temperature: 0.65
         })
     
-        console.log(response.choices[0].message.content)
+        // console.log(response.choices[0].message.content)
         document.querySelector('main').innerHTML = `
             <form method="get" action="index.html">
                     <div class="question">
