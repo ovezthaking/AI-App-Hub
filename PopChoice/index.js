@@ -2,9 +2,6 @@ import { hf, supabase } from "./config";
 import content from "./content";
 
 
-const question1 = document.getElementById('q1-label')
-const question2 = document.getElementById('q2-label')
-const question3 = document.getElementById('q3-label')
 const answer1 = document.getElementById('question1')
 const answer2 = document.getElementById('question2')
 const answer3 = document.getElementById('question3')
