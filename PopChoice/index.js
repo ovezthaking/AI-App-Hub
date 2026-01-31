@@ -38,3 +38,14 @@ const storeJsEmbeddings = async (input) => {
 }
 
 // storeJsEmbeddings(content)
+
+const findNearestMatch = async (embedding) => {
+    const { data } = await supabase.rpc('match_popchoice', {
+        query_embedding: embedding,
+        match_threshold: 0.5,
+        match_count: 1
+    })
+
+    const match = data.map(obj => obj.content).join('\n')
+    return match;
+}
