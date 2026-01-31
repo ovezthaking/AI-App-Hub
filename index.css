@@ -110,3 +110,22 @@ main {
 .reelrecs .icon {
     font-size: 1.75rem;
 }
+
+.popchoice {
+    display: flex;
+    background: #000C36;
+    font-family: "Carter One", system-ui;
+    flex-direction: column;
+    gap: 0;
+    color: #FFFFFF;
+}
+
+.popchoice > img {
+    height: auto;
+    width: 40%;
+    margin: 0;
+}
+
+.popchoice > p {
+    margin: 0;
+}
