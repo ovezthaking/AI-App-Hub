@@ -96,3 +96,7 @@ main, form{
     font-family: inherit;
     padding: 0.5em 0;
 }
+
+.thinking {
+    align-self: center;
+}

@@ -16,7 +16,6 @@ const createEmbedding = async (input) => {
         inputs: input
     })
 
-    console.log(embeddingResponse[0])
     return embeddingResponse[0]
 }
 
@@ -54,7 +53,7 @@ const findNearestMatch = async (embedding) => {
     try {
         const { data } = await supabase.rpc('match_popchoice', {
             query_embedding: embedding,
-            match_threshold: 0.5,
+            match_threshold: 0.0,
             match_count: 1
         })
         
@@ -63,6 +62,7 @@ const findNearestMatch = async (embedding) => {
         }
 
         const match = data.map(obj => obj.content).join('\n')
+        console.log('Match', match)
         return match
     } catch (err) {
         console.error('Error: ', err)
@@ -89,26 +89,42 @@ const getChatCompletion = async (text, query) => {
         content: `Context: ${query}, Answers: ${text}`
     })
 
-    const response = await hf.chatCompletion({
-        model: "Qwen/Qwen3-235B-A22B-Instruct-2507",
-        messages: chatMessages,
-        frequency_penalty: 0.65,
-        temperature: 0.5
-    })
-
-    console.log(response.choices[0].message.content)
-    document.querySelector('main').innerHTML = `
-        <form method="get" action="index.html">
-                <div class="question">
-                    ${response.choices[0].message.content}
-                </div>
-
-
-        <button type="submit" id="submit-btn">Go Again</button>
-    `
+    try {
+        const response = await hf.chatCompletion({
+            model: "Qwen/Qwen3-235B-A22B-Instruct-2507",
+            messages: chatMessages,
+            frequency_penalty: 0.65,
+            temperature: 0.5
+        })
+    
+        document.querySelector('main').innerHTML = `
+            <form method="get" action="index.html">
+                    <div class="question">
+                        ${response.choices[0].message.content}
+                    </div>
+    
+    
+            <button type="submit" id="submit-btn">Go Again</button>
+        `
+    } catch (err) {
+        console.error('Error: ', err)
+    }
 }
 
-getChatCompletion(content[0].content, 'potrzebuje cos jak avatar')
+
+
+async function main(input) {
+    const button = document.querySelector('button')
+    button.outerHTML = '<p class="thinking">Thinking...</p>'
+    try {
+        const embedding = await createEmbedding(input)
+        const match = await findNearestMatch(embedding)
+        await getChatCompletion(match, input)
+    } catch (err) {
+        console.error('Error in main function.', err.message)
+        button.outerHTML = '<p class="thinking">Sorry, something went wrong. Please try again.</p>'
+    }
+}
 
 
 document.getElementById('questions-form').addEventListener('submit', (e) => {
@@ -118,5 +134,14 @@ document.getElementById('questions-form').addEventListener('submit', (e) => {
             My favorite movie is ${answer1.value}, I am in the mood for ${answer2.value}
             and I want ${answer3.value}
         `
+        main(text)
     }
 })
+
+/*
+The Shawshank Redemption Because it taught me to never give up hope no matter how hard life gets
+
+I want to watch movies that were released after 1990
+
+I want to watch something stupid and fun
+*/
