@@ -37,7 +37,12 @@ const storeJsEmbeddings = async (input) => {
         }
         
         console.log(data)
-        await supabase.from('popchoice').insert(data)
+        const { error } = await supabase.from('popchoice').insert(data)
+
+        if (error) {
+            throw new Error('Issue inserting data into the database.')
+        }
+        
         console.log('Embeddings inserted!')
     } catch (err) {
         console.error('Error: ', err)
