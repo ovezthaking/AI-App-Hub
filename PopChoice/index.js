@@ -1,14 +1,17 @@
 import { hf, supabase } from "./config";
 import content from "./content";
 
+
 const createEmbedding = async (input) => {
     const embeddingResponse = await hf.featureExtraction({
         model: 'Qwen/Qwen3-Embedding-8B',
         inputs: input
     })
 
-    return embeddingResponse
+    
+    return embeddingResponse[0]
 }
+
 
 const storeJsEmbeddings = async (input) => {
     try {
@@ -16,7 +19,7 @@ const storeJsEmbeddings = async (input) => {
             input.map( async (textChunk) => {
                 const text = `${textChunk.title}, ${textChunk.releaseYear}: ${textChunk.content}`
     
-                const embeddingResponse = createEmbedding(text)
+                const embeddingResponse = await createEmbedding(text)
     
                 return {
                     content: text,
