@@ -2,7 +2,7 @@ import { supabase, hf } from "./config"
 import podcasts from './content.js'
 
 
-const query = "An episode Elon Musk would enjoy"
+const query = "Something for Elon Musk"
 
 async function main(input) {
   const embedding = await createEmbedding(input)
@@ -37,7 +37,7 @@ async function insertEmbeddings(input) {
 
         return  { 
           content: textChunk, 
-          embedding: embeddingResponse.embeddings 
+          embedding: embeddingResponse 
         }
  
     })    
@@ -50,14 +50,19 @@ async function insertEmbeddings(input) {
 // insertEmbeddings(podcasts)
 
 async function matchEmbeddings(embedding) {
+  try {
+    const { data } = await supabase.rpc('match_documents', {
+      query_embedding: embedding,
+      match_threshold: 0.25,
+      match_count: 1
+    })
+    
+    const result = data.length ? data[0].content : 'no info'
 
-  const { data } = await supabase.rpc('match_documents', {
-    query_embedding: embedding,
-    match_threshold: 0.29,
-    match_count: 1
-  })
-  
-  return data.length ? data[0].content : 'no info'
+    return result
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
 }
 
 main(query)
@@ -65,25 +70,27 @@ main(query)
 const chatMessages = [{
   role: 'system',
   content: `You are an enthusiastic podcast expert who loves recommending podcasts to people.
-   You will be given two pieces of information - some context about podcasts episodes and 
-   a question. Your main job is to formulate a short answer to the question using the 
-   provided context. If you are unsure and cannot find the answer in the context, say, 
-   "Sorry, I don't know the answer." Please do not make up the answer.` 
+   You will be given some context about a podcast episode and a question or topic request.
+   Your job is to recommend the podcast based on how well it matches the request.
+   Be creative in finding connections between the request and the podcast content.
+   If the podcast is relevant to the request, recommend it enthusiastically.
+   Provide a short, engaging recommendation.` 
 }]
 
 async function getChatCompletion(text, query) {
+  
   chatMessages.push({
     role: 'user',
     content: `Context: ${text} Question: ${query}`
   })
-
+  
   const response = await hf.chatCompletion({
       model: "zai-org/GLM-4.7-Flash",
       messages: chatMessages,
-      frequency_penalty: 0.5,
-      temperature: 0.5
+      frequency_penalty: 0.3,
+      temperature: 0.7
   })
 
-  console.log(response.choices[0].message.content)
+  console.log('Chat response:', response.choices[0].message.content)
   document.querySelector('body').innerHTML = `<p>${response.choices[0].message.content}</p>`
 }
