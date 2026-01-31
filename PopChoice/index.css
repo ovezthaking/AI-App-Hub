@@ -1,4 +1,93 @@
+* {
+    box-sizing: border-box;
+}
+
 html, body {
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: "Roboto Slab", serif;
+    width: 100%;
+    background-color: #000C36;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 8vh;
+    margin-bottom: 10vh;
+}
+
+header {
+    margin-top: 2em;
+    font-family: "Carter One", system-ui;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5em;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 45px;
+    font-weight: 400;
+    line-height: 100%;
+}
+
+header img {
+    width: 20%;
+}
+
+main, form{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+}
+
+.question {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.question > label {
+    display: block;
+    width: 90%;
+    max-width: 400px;
+    margin: 0 auto 0.5em auto;
+}
+
+.question > textarea {
+    font-family: inherit;
+    color: inherit;
+    resize: none;
+    background-color: #3B4877;
+    border-radius: 10px;
+    border: none;
+    width: 90%;
+    max-width: 400px;
+    padding: 0.7em 0.6em;
+    text-align: left;
+}
+
+.question > textarea::placeholder {
+    color: #05060C;
+}
+
+#submit-btn {
+    background-color: #51E08A;
+    width: 90%;
+    max-width: 400px;
+    margin: auto;
+    margin-top: 3vh;
+    font-size: 30px;
+    font-style: bold;
+    font-weight: 700;
+    font-family: inherit;
+    padding: 0.5em 0;
 }

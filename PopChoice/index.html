@@ -5,8 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PopChoice</title>
     <link rel="stylesheet" href="index.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitcount+Single:wght@100..900&family=Carter+One&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Mulish:ital,wght@0,200..1000;1,200..1000&family=Play:wght@400;700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Slab:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Smythe&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <header>
+        <img src="assets/popcorn.png" alt="PopCorn Icon">
+        <h1>PopChoice</h1>
+    </header>
+    <main>
+        <form method="post">
+            <div class="question">
+                <label for="question1">What’s your favorite movie and why?</label>
+                <textarea
+                    name=""
+                    id="question1"
+                    rows="3"
+                    placeholder="The Shawshank Redemption Because it taught me to never give up hope no matter how hard life gets"></textarea>
+            </div>
+
+            <div class="question">
+                <label for="question2">Are you in the mood for something new or a classic?</label>
+                <textarea
+                    name=""
+                    id="question2"
+                    rows="2"
+                    placeholder="I want to watch movies that were released after 1990"></textarea>
+            </div>
+
+            <div class="question">
+                <label for="question3">Do you wanna have fun or do you want something serious?</label>
+                <textarea
+                    name=""
+                    id="question3"
+                    rows="2"
+                    placeholder="I want to watch something stupid and fun"></textarea>
+            </div>
+
+            <button type="submit" id="submit-btn">Let’s Go</button>
+        </form>
+    </main>
     <script type="module" src="index.js"></script>
 </body>
 </html>
