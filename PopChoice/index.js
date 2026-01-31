@@ -1,5 +1,5 @@
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
-import { hf, supabase } from "./config";
+import { hf, supabase, TMDBApiKey } from "./config";
 import content from "./content";
 
 
@@ -133,6 +133,40 @@ const findNearestMatch = async (embedding) => {
 }
 
 
+const getPoster = async (title) => {
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            Authorization: `Bearer ${TMDBApiKey}`
+        }
+    }
+
+    try {
+        const searchRes = await fetch(`https://api.themoviedb.org/3/search/movie?query=${title}&include_adult=false&language=en-US&page=1`, options)
+        
+        if (!searchRes.ok) {
+            throw new Error('TMDB search response not OK')
+        }
+
+        const searchData = await searchRes.json()
+
+        const movie = searchData.results[0] 
+
+        if (!movie) {
+            throw new Error('Movie not found')
+        }
+        
+        const posterPath = movie.poster_path
+        const posterUrl = `https://image.tmdb.org/t/p/w500${posterPath}`
+        
+        return posterUrl
+    } catch (err) {
+        console.error('Error: ', err)
+    }
+}
+
+
 const chatMessages = [{
     role: 'system',
     content: `You are a movie recommendation expert. Your task is to:
@@ -151,6 +185,7 @@ const chatMessages = [{
 const getChatCompletion = async (text, query) => {
     chatMessages.length = 1
     
+    const main = document.querySelector('main')
     const userContent = `USER PREFERENCES:\n${query}\n\nMOVIE DATA FROM DATABASE:\n${text}`
     
     chatMessages.push({
@@ -167,7 +202,7 @@ const getChatCompletion = async (text, query) => {
         })
     
         // console.log(response.choices[0].message.content)
-        document.querySelector('main').innerHTML = `
+        main.innerHTML = `
             <form method="get" action="index.html">
                     <div class="question">
                         ${text ? response.choices[0].message.content : '<p>' + response.choices[0].message.content + '</p>'}
@@ -176,11 +211,23 @@ const getChatCompletion = async (text, query) => {
     
             <button type="submit" id="submit-btn">Go Again</button>
         `
+        const h2 = main.querySelector('h2')
+
+        if (h2) {
+            const title = h2.textContent.split('(')[0].trim()
+            const poster = await getPoster(title)
+            console.log(title)
+            const img = document.createElement('img')
+            img.src = poster
+            img.alt = 'Movie Poster'
+            
+            h2.insertAdjacentElement('afterend', img)
+        }
+        
     } catch (err) {
         console.error('Error: ', err)
     }
 }
-
 
 
 async function main(input) {
