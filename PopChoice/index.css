@@ -55,6 +55,11 @@ main, form{
     align-items: center;
 }
 
+.question > p {
+    width: 90%;
+    max-width: 400px;
+}
+
 .question > label {
     display: block;
     width: 90%;
