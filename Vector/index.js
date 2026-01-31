@@ -30,10 +30,10 @@ async function createEmbedding(input) {
 async function insertEmbeddings(input) {
   const data = await Promise.all(
     input.map( async (textChunk) => {
-        const embeddingResponse = await getEmbeddings(
-            textChunk,
-            "sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
-        )
+        const embeddingResponse = await hf.featureExtraction({
+          model: "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+          inputs: textChunk
+        });
 
         return  { 
           content: textChunk, 
@@ -43,7 +43,7 @@ async function insertEmbeddings(input) {
     })    
   );
 
-//   await supabase.from('documents').insert(data); 
+  // await supabase.from('documents').insert(data); 
   console.log('Embedding complete and inserted!');
 }
 
