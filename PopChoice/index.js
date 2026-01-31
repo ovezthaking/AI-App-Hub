@@ -53,7 +53,7 @@ const findNearestMatch = async (embedding) => {
     try {
         const { data } = await supabase.rpc('match_popchoice', {
             query_embedding: embedding,
-            match_threshold: 0.0,
+            match_threshold: 0.35,
             match_count: 1
         })
         
@@ -62,7 +62,7 @@ const findNearestMatch = async (embedding) => {
         }
 
         const match = data.map(obj => obj.content).join('\n')
-        console.log('Match', match)
+        console.log(data)
         return match
     } catch (err) {
         console.error('Error: ', err)
@@ -73,34 +73,42 @@ const findNearestMatch = async (embedding) => {
 
 const chatMessages = [{
     role: 'system',
-    content: `You are an enthusiastic movie expert who loves recommending movies to people.
-        You will be given two pieces of information - some context about movies and a answers to questions.
-        Your main job is to formulate a short answer to the question using the provided context.
-        If you are unsure and cannot find the answer in the context, say,
-        "<h2>Sorry, I don't know the answer." Please do not make up the answer.</h2>
-        Your answers must be like this example:
-        <h2>Title (release year)</h2>
-        <p>Informations</p>`
+    content: `You are a movie recommendation expert. Your task is to:
+        1. Read the USER PREFERENCES section
+        2. Read the MOVIE DATA FROM DATABASE section  
+        3. Compare them and recommend the movie if it matches
+        4. If the movie matches the preferences, respond with:
+        <h2>Title (year)</h2>
+        <p>Why this movie matches their preferences</p>
+        5. Always recommend the movie from the database - it was selected because it matches the user's query.
+        6. Be enthusiastic and explain the connection.
+        7. Respond in language that is provided by user's answers
+        `
 }]
 
 const getChatCompletion = async (text, query) => {
+    chatMessages.length = 1
+    
+    const userContent = `USER PREFERENCES:\n${query}\n\nMOVIE DATA FROM DATABASE:\n${text}`
+    
     chatMessages.push({
         role: 'user',
-        content: `Context: ${query}, Answers: ${text}`
+        content: userContent
     })
 
     try {
         const response = await hf.chatCompletion({
             model: "Qwen/Qwen3-235B-A22B-Instruct-2507",
             messages: chatMessages,
-            frequency_penalty: 0.65,
-            temperature: 0.5
+            frequency_penalty: 0.2,
+            temperature: 0.65
         })
     
+        console.log(response.choices[0].message.content)
         document.querySelector('main').innerHTML = `
             <form method="get" action="index.html">
                     <div class="question">
-                        ${response.choices[0].message.content}
+                        ${text ? response.choices[0].message.content : '<p>' + response.choices[0].message.content + '</p>'}
                     </div>
     
     
@@ -130,10 +138,7 @@ async function main(input) {
 document.getElementById('questions-form').addEventListener('submit', (e) => {
     e.preventDefault()
     if (answer1.value && answer2.value && answer3.value) {
-        const text = `
-            My favorite movie is ${answer1.value}, I am in the mood for ${answer2.value}
-            and I want ${answer3.value}
-        `
+        const text = `Favorite movie: ${answer1.value.trim()}, Current mood: ${answer2.value.trim()}, Have fun or something serious: ${answer3.value}`
         main(text)
     }
 })
