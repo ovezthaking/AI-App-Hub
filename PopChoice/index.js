@@ -1,3 +1,4 @@
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { hf, supabase } from "./config";
 import content from "./content";
 
@@ -14,6 +15,30 @@ const createEmbedding = async (input) => {
     })
 
     return embeddingResponse[0]
+}
+
+
+const splitDocument = async (document) => {
+    try {
+        const res = await fetch(document)
+
+        if (!res.ok) {
+            throw new Error('Response status is not ok')
+        }
+    
+        const text = await res.text()
+    
+        const splitter = new RecursiveCharacterTextSplitter({
+            chunkSize: 300,
+            chunkOverlap: 60,
+        })
+
+        const output = await splitter.createDocuments([text])
+
+        return output
+    } catch (err) {
+        console.error('Error: ', err)
+    }
 }
 
 
@@ -42,7 +67,7 @@ const storeJsEmbeddings = async (input) => {
         if (error) {
             throw new Error('Issue inserting data into the database.')
         }
-        
+
         console.log('Embeddings inserted!')
     } catch (err) {
         console.error('Error: ', err)
