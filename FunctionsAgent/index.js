@@ -35,24 +35,27 @@ async function agent(query) {
         // const responseText = response.choices[0].message.content
         console.log(response)
         const { finish_reason: finishReason, message } = response.choices[0]
+        const { tool_calls: toolCalls } = message
 
         if (finishReason === 'stop'){
             console.log(message.content)
             console.log('AGENT ENDING')
             return
         }
-        // Check finish reason
-        // If "stop"
-            // return result
-        // else if "tool_calls"
-            // call functions
-            // append results
-            // continue
+        else if (finishReason === 'tool_calls') {
+            for (const toolCall of toolCalls) {
+                const functionName = toolCall.function.name
+                const functionToCall = availableFunctions[functionName]
+                const functionResponse = await functionToCall()
+
+                console.log(functionResponse)
+            }
+        }
     }
 // }
 
-console.log(await agent('Jak się czujesz?'))
-// console.log(await agent('Jaka jest moja obecna lokalizacja?'))
+// console.log(await agent('Jak się czujesz?'))
+console.log(await agent('Jaka jest moja obecna lokalizacja?'))
 
 
 /**
