@@ -1,5 +1,6 @@
 import { InferenceClient } from "@huggingface/inference";
 import { getCurrentWeather, getLocation } from "./tools";
+import { renderNewMessage } from "./dom";
 
 
 const hf = new InferenceClient(import.meta.env.VITE_HF_TOKEN)
@@ -66,6 +67,7 @@ async function agent(query) {
         role: 'user',
         content: query
     })
+    renderNewMessage(query, 'user')
 
     const MAX_ITERATIONS = 5
     const actionRegex = /^Action: (\w+): (.*)$/
@@ -111,7 +113,16 @@ async function agent(query) {
     }
 }
 
-// console.log(await agent('Jakie są pomysły na aktywności, które mogę zrobić dzisiejszego popołudnia?'))
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const inputEl = document.getElementById('user-input')
+    inputEl.focus()
+    const formData = new FormData(e.target)
+    const query = formData.get('user-input')
+    e.target.reset()
+    await agent(query)
+})
 
 
 /**
