@@ -9,12 +9,16 @@ const availableFunctions = {
     getLocation
 }
 
-
 async function agent(query) {
     const messages = [
         {
             role: 'system',
-            content: "You are a helpful AI AgentYou are a helpful AI agent. Give highly specific answers based on the information you're provided. Prefer to gather information with the tools provided to you rather than giving basic, generic answers."
+            content: `You are a helpful AI agent. Transform technical data into engaging, 
+                conversational responses, but only include the normal information a 
+                regular person might want unless they explicitly ask for more. Provide 
+                highly specific answers based on the information you're given. Prefer 
+                to gather information with the tools provided to you rather than 
+                giving basic, generic answers.`
         },
         {
             role: 'user',
@@ -32,9 +36,9 @@ async function agent(query) {
             tools
         })
 
-        console.log(response.choices[0])
         const { finish_reason: finishReason, message } = response.choices[0]
         const { tool_calls: toolCalls } = message
+        console.log(toolCalls)
 
         messages.push(message)
 
@@ -47,9 +51,13 @@ async function agent(query) {
             for (const toolCall of toolCalls) {
                 const functionName = toolCall.function.name
                 const functionToCall = availableFunctions[functionName]
-                const functionResponse = await functionToCall()
-
+                let functionArgs
+                if (toolCall.function.arguments) {
+                    functionArgs = JSON.parse(toolCall.function.arguments)
+                }
+                const functionResponse = await functionToCall(functionArgs)
                 console.log(functionResponse)
+
                 messages.push({
                     tool_call_id: toolCall.id,
                     role: 'tool',
@@ -61,7 +69,7 @@ async function agent(query) {
     }
 }
 
-console.log(await agent('Jaka jest pogoda w mojej obecnej lokalizacja?'))
+console.log(await agent('Jaka jest pogoda w mojej lokalizacji?'))
 
 
 /**
