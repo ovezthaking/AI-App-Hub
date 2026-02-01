@@ -4,6 +4,11 @@ import { getCurrentWeather, getLocation } from "./tools";
 
 const hf = new InferenceClient(import.meta.env.VITE_HF_TOKEN)
 
+const availableFunctions = {
+    'getCurrentWeather': getCurrentWeather,
+    'getLocation': getLocation
+}
+
 /*
 PLAN:
 1. Design a well-written ReAct prompt
@@ -81,11 +86,14 @@ async function agent(query) {
 
    const actionRegex = /^Action: (\w+): (.*)$/
    const foundActionStr = responseLines.find(str => actionRegex.test(str))
-   const actions = actionRegex.exec(foundActionStr)
-   console.log(actions)
+   const actions = actionRegex["exec"](foundActionStr)
+   const [_, action, actionArg] = actions
+
+   const observation = await availableFunctions[action](actionArg)
+   console.log(observation)
 }
 
-agent('Gdzie jest moja lokalizacja?')
+agent('Jaka jest teraz pogoda we Wrocławiu?')
 
 // const weather = await getCurrentWeather()
 // const location = await getLocation()
