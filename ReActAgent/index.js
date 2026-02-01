@@ -75,7 +75,7 @@ async function agent(query) {
     for (let i = 0; i < MAX_ITERATIONS; i++) {
         console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
-            model: 'zai-org/GLM-4.7-Flash',
+            model: 'XiaomiMiMo/MiMo-V2-Flash',
             messages
         })
 
