@@ -5,8 +5,8 @@ import { getCurrentWeather, getLocation } from "./tools";
 const hf = new InferenceClient(import.meta.env.VITE_HF_TOKEN)
 
 const availableFunctions = {
-    'getCurrentWeather': getCurrentWeather,
-    'getLocation': getLocation
+    getCurrentWeather,
+    getLocation
 }
 
 /*
@@ -69,7 +69,7 @@ async function agent(query) {
 
     const response = await hf.chatCompletion({
         model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
-        messages: messages
+        messages
     })
 
     // console.log(response.choices[0].message.content)
@@ -82,34 +82,26 @@ async function agent(query) {
     * 5. Add an "Observation" message with the results of the func call
     */
    const responseText = response.choices[0].message.content
+   messages.push({role: 'assistant', content: responseText})
    const responseLines = responseText.split('\n')
 
    const actionRegex = /^Action: (\w+): (.*)$/
    const foundActionStr = responseLines.find(str => actionRegex.test(str))
-   const actions = actionRegex["exec"](foundActionStr)
-   const [_, action, actionArg] = actions
 
-   const observation = await availableFunctions[action](actionArg)
-   console.log(observation)
+   if (foundActionStr) {
+    const actions = actionRegex["exec"](foundActionStr)
+    const [_, action, actionArg] = actions
+    
+    if (!availableFunctions.hasOwnProperty(action)){
+        throw new Error(`Unknown action: ${action}: ${actionArg}`)
+    }
+    const observation = await availableFunctions[action](actionArg)
+    messages.push({ role: 'assistant', content: `Observation: ${observation}`})
+   }
 }
 
 agent('Jaka jest teraz pogoda we Wrocławiu?')
 
-// const weather = await getCurrentWeather()
-// const location = await getLocation()
-
-// const response = await hf.chatCompletion({
-//     model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
-//     messages: [
-//         {
-//             role: 'user',
-//             content: `Give me a list of activity ideas based on my current location of ${location} and weather of ${weather}`
-//         }
-//     ]
-// })
-
-
-// console.log(response.choices[0].message.content)
 
 /**
  * Goal - build an agent that can answer any questions that might require knowledge 
