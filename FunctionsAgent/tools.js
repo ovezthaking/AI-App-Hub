@@ -1,11 +1,17 @@
 export const getCurrentWeather = async ({location}) => {
-    const weather = {
-        location,
-        temperature: '72',
-        forecast: 'sunny'
+    try {
+        const weatherUrl = new URL("https://apis.scrimba.com/openweathermap/data/2.5/weather")
+        weatherUrl.searchParams.append("q", location)
+        weatherUrl.searchParams.append("units", "metric")
+        const res = await fetch(weatherUrl)
+        const data = res.json()
+        
+        return JSON.stringify(data)
+    } catch (err) {
+        console.error(err.message)
     }
-    return JSON.stringify(weather)
 }
+    
 
 export const getLocation = async () => {
     try {
