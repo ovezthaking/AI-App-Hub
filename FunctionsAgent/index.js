@@ -1,5 +1,6 @@
 import { InferenceClient } from "@huggingface/inference";
 import { getCurrentWeather, getLocation, tools } from "./tools";
+import { renderNewMessage } from "./dom"
 
 
 const hf = new InferenceClient(import.meta.env.VITE_HF_TOKEN)
