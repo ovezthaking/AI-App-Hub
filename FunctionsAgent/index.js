@@ -1,5 +1,5 @@
 import { InferenceClient } from "@huggingface/inference";
-import { getCurrentWeather, getLocation } from "./tools";
+import { getCurrentWeather, getLocation, tools } from "./tools";
 
 
 const hf = new InferenceClient(import.meta.env.VITE_HF_TOKEN)
@@ -8,9 +8,6 @@ const availableFunctions = {
     getCurrentWeather,
     getLocation
 }
-
-
-const systemPrompt = ``
 
 
 async function agent(query) {
@@ -27,20 +24,20 @@ async function agent(query) {
 
     const MAX_ITERATIONS = 5
 
-    for (let i = 0; i < MAX_ITERATIONS; i++) {
-        console.log(`Iteration #${i+1}`)
+    // for (let i = 0; i < MAX_ITERATIONS; i++) {
+        // console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
             model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
             messages,
-            tools: []
+            tools
         })
 
         const responseText = response.choices[0].message.content
-        console.log(responseText)
-    }
+        console.log(response)
+    // }
 }
 
-console.log(await agent('Jakie są pomysły na aktywności, które mogę zrobić dzisiejszego popołudnia?'))
+console.log(await agent('Jaka jest moja obecna lokalizacja?'))
 
 
 /**
