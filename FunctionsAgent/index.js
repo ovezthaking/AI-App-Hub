@@ -24,7 +24,7 @@ async function agent(query) {
 
     const MAX_ITERATIONS = 5
 
-    // for (let i = 0; i < MAX_ITERATIONS; i++) {
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
         // console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
             model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
@@ -32,9 +32,17 @@ async function agent(query) {
             tools
         })
 
-        const responseText = response.choices[0].message.content
+        // const responseText = response.choices[0].message.content
         console.log(response)
-    // }
+
+        // Check finish reason
+        // If "stop"
+            // return result
+        // else if "tool_calls"
+            // call functions
+            // append results
+            // continue
+    }
 }
 
 console.log(await agent('Jaka jest moja obecna lokalizacja?'))
