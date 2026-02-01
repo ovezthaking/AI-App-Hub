@@ -67,40 +67,51 @@ async function agent(query) {
         }
     ]
 
-    const response = await hf.chatCompletion({
-        model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
-        messages
-    })
+    const MAX_ITERATIONS = 5
+    const actionRegex = /^Action: (\w+): (.*)$/
 
-    // console.log(response.choices[0].message.content)
-    /*
-    * PLAN:
-    * 1. Split the string on the newline character \n
-    * 2. Search through the array of strings for one that has: "Action"
-    * 3. Parse the action ( func and parameter ) from the string
-    * 4. Calling the func
-    * 5. Add an "Observation" message with the results of the func call
-    */
-   const responseText = response.choices[0].message.content
-   messages.push({role: 'assistant', content: responseText})
-   const responseLines = responseText.split('\n')
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
+        console.log(`Iteration #${i+1}`)
+        const response = await hf.chatCompletion({
+            model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
+            messages
+        })
 
-   const actionRegex = /^Action: (\w+): (.*)$/
-   const foundActionStr = responseLines.find(str => actionRegex.test(str))
+        /*
+        * PLAN:
+        * 1. Split the string on the newline character \n
+        * 2. Search through the array of strings for one that has: "Action"
+        * 3. Parse the action ( func and parameter ) from the string
+        * 4. Calling the func
+        * 5. Add an "Observation" message with the results of the func call
+        */
 
-   if (foundActionStr) {
-    const actions = actionRegex["exec"](foundActionStr)
-    const [_, action, actionArg] = actions
-    
-    if (!availableFunctions.hasOwnProperty(action)){
-        throw new Error(`Unknown action: ${action}: ${actionArg}`)
+        const responseText = response.choices[0].message.content
+        console.log(responseText)
+        messages.push({role: 'assistant', content: responseText})
+        const responseLines = responseText.split('\n')
+
+        
+        const foundActionStr = responseLines.find(str => actionRegex.test(str))
+
+        if (foundActionStr) {
+            const actions = actionRegex["exec"](foundActionStr)
+            const [_, action, actionArg] = actions
+            
+            if (!availableFunctions.hasOwnProperty(action)){
+                throw new Error(`Unknown action: ${action}: ${actionArg}`)
+            }
+            console.log(`Calling function ${action} with argument ${actionArg}`)
+            const observation = await availableFunctions[action](actionArg)
+            messages.push({ role: 'assistant', content: `Observation: ${observation}`})
+        } else {
+            console.log("Agent finished with task")
+            return responseText
+        }
     }
-    const observation = await availableFunctions[action](actionArg)
-    messages.push({ role: 'assistant', content: `Observation: ${observation}`})
-   }
 }
 
-agent('Jaka jest teraz pogoda we Wrocławiu?')
+console.log(await agent('Jaka jest teraz pogoda w mojej lokalizacji?'))
 
 
 /**
