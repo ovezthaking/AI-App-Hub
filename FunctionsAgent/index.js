@@ -24,18 +24,19 @@ async function agent(query) {
 
     const MAX_ITERATIONS = 5
 
-    // for (let i = 0; i < MAX_ITERATIONS; i++) {
-        // console.log(`Iteration #${i+1}`)
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
+        console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
             model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
             messages,
             tools
         })
 
-        // const responseText = response.choices[0].message.content
-        console.log(response)
+        console.log(response.choices[0])
         const { finish_reason: finishReason, message } = response.choices[0]
         const { tool_calls: toolCalls } = message
+
+        messages.push(message)
 
         if (finishReason === 'stop'){
             console.log(message.content)
@@ -49,13 +50,18 @@ async function agent(query) {
                 const functionResponse = await functionToCall()
 
                 console.log(functionResponse)
+                messages.push({
+                    tool_call_id: toolCall.id,
+                    role: 'tool',
+                    name: functionName,
+                    content: functionResponse
+                })
             }
         }
     }
-// }
+}
 
-// console.log(await agent('Jak się czujesz?'))
-console.log(await agent('Jaka jest moja obecna lokalizacja?'))
+console.log(await agent('Jaka jest pogoda w mojej obecnej lokalizacja?'))
 
 
 /**
