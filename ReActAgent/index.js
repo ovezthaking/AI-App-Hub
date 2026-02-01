@@ -111,7 +111,7 @@ async function agent(query) {
     }
 }
 
-console.log(await agent('Jaka jest teraz pogoda w mojej lokalizacji?'))
+console.log(await agent('Jakie są pomysły na aktywności, które mogę zrobić dzisiejszego popołudnia?'))
 
 
 /**
