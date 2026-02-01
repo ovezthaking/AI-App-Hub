@@ -4,7 +4,7 @@ export const getCurrentWeather = async ({location}) => {
         weatherUrl.searchParams.append("q", location)
         weatherUrl.searchParams.append("units", "metric")
         const res = await fetch(weatherUrl)
-        const data = res.json()
+        const data = await res.json()
         
         return JSON.stringify(data)
     } catch (err) {

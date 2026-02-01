@@ -10,27 +10,32 @@ const availableFunctions = {
     getLocation
 }
 
+const messages = [
+    {
+        role: 'system',
+        content: `
+You are a helpful AI agent. Transform technical data into engaging, 
+conversational responses, but only include the normal information a 
+regular person might want unless they explicitly ask for more. Provide 
+highly specific answers based on the information you're given. Prefer 
+to gather information with the tools provided to you rather than 
+giving basic, generic answers.
+`
+    },
+]
+
 async function agent(query) {
-    const messages = [
-        {
-            role: 'system',
-            content: `You are a helpful AI agent. Transform technical data into engaging, 
-                conversational responses, but only include the normal information a 
-                regular person might want unless they explicitly ask for more. Provide 
-                highly specific answers based on the information you're given. Prefer 
-                to gather information with the tools provided to you rather than 
-                giving basic, generic answers.`
-        },
-        {
-            role: 'user',
-            content: query
-        }
-    ]
+    
+    messages.push({
+        role: 'user',
+        content: query
+    })
+    renderNewMessage(query, 'user')
 
     const MAX_ITERATIONS = 5
 
     for (let i = 0; i < MAX_ITERATIONS; i++) {
-        console.log(`Iteration #${i+1}`)
+        // console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
             model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
             messages,
@@ -39,13 +44,14 @@ async function agent(query) {
 
         const { finish_reason: finishReason, message } = response.choices[0]
         const { tool_calls: toolCalls } = message
-        console.log(toolCalls)
+        // console.log(toolCalls)
 
         messages.push(message)
 
         if (finishReason === 'stop'){
-            console.log(message.content)
-            console.log('AGENT ENDING')
+            const finalMessage = message.content
+            messages.push({ role: 'system', content: finalMessage })
+            renderNewMessage(finalMessage, 'assistant')
             return
         }
         else if (finishReason === 'tool_calls') {
@@ -57,7 +63,7 @@ async function agent(query) {
                     functionArgs = JSON.parse(toolCall.function.arguments)
                 }
                 const functionResponse = await functionToCall(functionArgs)
-                console.log(functionResponse)
+                // console.log(functionResponse)
 
                 messages.push({
                     tool_call_id: toolCall.id,
@@ -70,7 +76,16 @@ async function agent(query) {
     }
 }
 
-console.log(await agent('Jaka jest pogoda w mojej lokalizacji?'))
+
+document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const inputEl = document.getElementById('user-input')
+    inputEl.focus()
+    const formData = new FormData(e.target)
+    const query = formData.get('user-input')
+    e.target.reset()
+    await agent(query)
+})
 
 
 /**
