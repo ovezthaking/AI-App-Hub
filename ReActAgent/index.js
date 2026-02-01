@@ -85,7 +85,7 @@ async function agent(query) {
    console.log(actions)
 }
 
-agent('Mam ochote na ryby')
+agent('Gdzie jest moja lokalizacja?')
 
 // const weather = await getCurrentWeather()
 // const location = await getLocation()
