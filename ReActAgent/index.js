@@ -67,7 +67,22 @@ async function agent(query) {
         messages: messages
     })
 
-    console.log(response.choices[0].message.content)
+    // console.log(response.choices[0].message.content)
+    /*
+    * PLAN:
+    * 1. Split the string on the newline character \n
+    * 2. Search through the array of strings for one that has: "Action"
+    * 3. Parse the action ( func and parameter ) from the string
+    * 4. Calling the func
+    * 5. Add an "Observation" message with the results of the func call
+    */
+   const responseText = response.choices[0].message.content
+   const responseLines = responseText.split('\n')
+
+   const actionRegex = /^Action: (\w+): (.*)$/
+   const foundActionStr = responseLines.find(str => actionRegex.test(str))
+   const actions = actionRegex.exec(foundActionStr)
+   console.log(actions)
 }
 
 agent('Mam ochote na ryby')
