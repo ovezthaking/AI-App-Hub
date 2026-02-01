@@ -75,7 +75,7 @@ async function agent(query) {
     for (let i = 0; i < MAX_ITERATIONS; i++) {
         console.log(`Iteration #${i+1}`)
         const response = await hf.chatCompletion({
-            model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
+            model: 'zai-org/GLM-4.7-Flash',
             messages
         })
 
@@ -97,7 +97,7 @@ async function agent(query) {
         const foundActionStr = responseLines.find(str => actionRegex.test(str))
 
         if (foundActionStr) {
-            const actions = actionRegex["exec"](foundActionStr)
+            const actions = actionRegex.exec(foundActionStr)
             const [_, action, actionArg] = actions
             
             if (!availableFunctions.hasOwnProperty(action)){
@@ -105,9 +105,11 @@ async function agent(query) {
             }
             console.log(`Calling function ${action} with argument ${actionArg}`)
             const observation = await availableFunctions[action](actionArg)
-            messages.push({ role: 'assistant', content: `Observation: ${observation}`})
+            messages.push({ role: 'user', content: `Observation: ${observation}`})
         } else {
             console.log("Agent finished with task")
+            messages.push({ role: "system", content: responseText })
+            renderNewMessage(responseText, 'assistant')
             return responseText
         }
     }

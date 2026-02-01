@@ -1,4 +1,4 @@
-export const getCurrentWeather = async ({location}) => {
+export const getCurrentWeather = async (location) => {
     try {
         const weatherUrl = new URL("https://apis.scrimba.com/openweathermap/data/2.5/weather")
         weatherUrl.searchParams.append("q", location)
