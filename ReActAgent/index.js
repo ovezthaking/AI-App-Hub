@@ -50,6 +50,28 @@ Answer: <Suggested activities based on sunny weather that are highly specific to
 `
 
 
+async function agent(query) {
+    const messages = [
+        {
+            role: 'system',
+            content: systemPrompt
+        },
+        {
+            role: 'user',
+            content: query
+        }
+    ]
+
+    const response = await hf.chatCompletion({
+        model: 'Qwen/Qwen3-235B-A22B-Instruct-2507',
+        messages: messages
+    })
+
+    console.log(response.choices[0].message.content)
+}
+
+agent('Mam ochote na ryby')
+
 // const weather = await getCurrentWeather()
 // const location = await getLocation()
 
