@@ -54,18 +54,18 @@ You then output:
 Answer: <Suggested activities based on sunny weather that are highly specific to New York City and surrounding areas.>
 `
 
+const messages = [
+    {
+        role: 'system',
+        content: systemPrompt
+    },
+]
 
 async function agent(query) {
-    const messages = [
-        {
-            role: 'system',
-            content: systemPrompt
-        },
-        {
-            role: 'user',
-            content: query
-        }
-    ]
+    messages.push({
+        role: 'user',
+        content: query
+    })
 
     const MAX_ITERATIONS = 5
     const actionRegex = /^Action: (\w+): (.*)$/
@@ -111,7 +111,7 @@ async function agent(query) {
     }
 }
 
-console.log(await agent('Jakie są pomysły na aktywności, które mogę zrobić dzisiejszego popołudnia?'))
+// console.log(await agent('Jakie są pomysły na aktywności, które mogę zrobić dzisiejszego popołudnia?'))
 
 
 /**

@@ -1,12 +1,25 @@
-export const getCurrentWeather = async () => {
-    const weather = {
-        temperature: '72',
-        unit: 'F',
-        forecast: 'sunny'
+export const getCurrentWeather = async ({location}) => {
+    try {
+        const weatherUrl = new URL("https://apis.scrimba.com/openweathermap/data/2.5/weather")
+        weatherUrl.searchParams.append("q", location)
+        weatherUrl.searchParams.append("units", "metric")
+        const res = await fetch(weatherUrl)
+        const data = await res.json()
+        
+        return JSON.stringify(data)
+    } catch (err) {
+        console.error(err.message)
     }
-    return JSON.stringify(weather)
 }
+    
 
 export const getLocation = async () => {
-    return "Salt Lake City, UT"
+    try {
+        const res = await fetch('https://ipapi.co/json/')
+        const text = await res.json()
+
+        return JSON.stringify(text)
+    } catch (err) {
+        console.log(err)
+    }
 }
