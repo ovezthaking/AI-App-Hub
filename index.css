@@ -129,3 +129,32 @@ main {
 .popchoice > p {
     margin: 0;
 }
+
+.travel {
+    background-color: white;
+    background-image: url(TravelAgent/assets/logo.png);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.travel p {
+
+    text-decoration: none;
+    font-family: "Inter", sans-serif;
+    color: #112A46;
+    text-shadow: 3px 3px 5px white;
+    margin-top: 10em;
+    font-size: 1rem;
+    
+}
+
+
+@media (min-width: 1000px) {
+    .travel p {
+        font-size: 2rem;
+        margin-top: 5em;
+        color: white;
+        text-shadow: 2px 1px 10px black;
+    }
+}
