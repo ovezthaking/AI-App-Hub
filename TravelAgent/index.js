@@ -1,5 +1,5 @@
 import { getAmadeusToken } from "./config"
-import { getFlights, getWeather } from "./tools"
+import { getFlights, getHotels, getWeather } from "./tools"
 
 
 const travellersInput = document.getElementById('travellers')
@@ -29,3 +29,6 @@ document.querySelector('.main-btn').addEventListener('click', (e) => {
 
     
 })
+
+// console.log(await getFlights('WRO', 'CDG', '2026-02-05', '2026-02-10', 2))
+// console.log(await getHotels('WRO'))

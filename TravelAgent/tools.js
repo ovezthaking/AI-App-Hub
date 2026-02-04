@@ -10,6 +10,7 @@ export async function getWeather(city) {
     return data
 }
 
+
 export async function getFlights(
     originLocationCode, destinationLocationCode,
     departureDate, returnDate, travellers
@@ -25,7 +26,28 @@ export async function getFlights(
         }
     )
 
-    const data = res.json()
+    const data = await res.json()
     
-    return data
+    
+    return { offers: data.data, lines: data.dictionaries }
 }
+
+
+export async function getHotels(cityCode) {
+    const token = await getAmadeusToken()
+
+    const res = await fetch(
+        `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}&radius=5`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+        }
+    )
+
+    const data = await res.json()
+
+    return data.data.slice(0,3)
+}
+
+
