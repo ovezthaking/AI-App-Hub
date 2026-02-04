@@ -13,12 +13,18 @@ export async function getWeather(city) {
 
 export async function getFlights(
     originLocationCode, destinationLocationCode,
-    departureDate, returnDate, travellers
+    departureDate, returnDate=null, travellers
 ) {
     const token = await getAmadeusToken()
 
+    let url = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&adults=2&max=5&departureDate=${departureDate}&adults=${travellers}&max=3`
+
+    if (returnDate) {
+        url += `&returnDate=${returnDate}`
+    }
+
     const res = await fetch(
-        `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&adults=2&max=5&departureDate=${departureDate}&returnDate=${returnDate}&adults=${travellers}&max=3`,
+        url,
         {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -50,4 +56,69 @@ export async function getHotels(cityCode) {
     return data.data.slice(0,3)
 }
 
-
+export const tools = [
+    {
+        type: 'function',
+        function: {
+            name: 'getWeather',
+            description: 'Get the current weather of destination city',
+            parameters: {
+                type: 'object',
+                properties: {
+                    city: { type: 'string' }
+                },
+                required: ['city']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'getFlights',
+            description: 'Get flights from origin Location to the destination in provided dates',
+            parameters: {
+                type: 'object',
+                properties: {
+                    originLocationCode: {
+                        type: 'string',
+                        description: 'Location code of origin location city'
+                    },
+                    destinationLocationCode: {
+                        type: 'string',
+                        description: 'Location code of destination city'
+                    },
+                    departureDate: {
+                        type: 'string',
+                        description: 'Departure date in YYYY-MM-DD format'
+                    },
+                    returnDate: {
+                        type: 'string',
+                        description: 'Return date in YYYY-MM-DD format'
+                    },
+                    travellers: {
+                        type: 'number',
+                        description: 'Number of travellers/adults'
+                    }
+                },
+                required: ['originLocationCode', 'destinationLocationCode', 'departureDate', 'travellers']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'getHotel',
+            description: 'Get Hotels in the destination location',
+            parameters: {
+                type: 'object',
+                properties: {
+                    cityCode: {
+                        type: 'string',
+                        description: 'Location code of destination location city'
+                    },
+                },
+                required: ['cityCode']
+            }
+        }
+    }
+]
