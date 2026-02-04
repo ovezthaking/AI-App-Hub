@@ -1,4 +1,5 @@
-import { getWeather } from "./tools"
+import { getAmadeusToken } from "./config"
+import { getFlights, getWeather } from "./tools"
 
 
 const travellersInput = document.getElementById('travellers')

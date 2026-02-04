@@ -1,4 +1,4 @@
-import { OPENWEATHER_API_KEY, AMADEUS_API_KEY, AMADEUS_SECRET } from "./config"
+import { OPENWEATHER_API_KEY, AMADEUS_API_KEY, AMADEUS_SECRET, getAmadeusToken } from "./config"
 
 export async function getWeather(city) {
     const res = await fetch(
@@ -7,7 +7,25 @@ export async function getWeather(city) {
 
     const data = await res.json()
 
-    console.log(data)
+    return data
 }
 
+export async function getFlights(
+    originLocationCode, destinationLocationCode,
+    departureDate, returnDate, travellers
+) {
+    const token = await getAmadeusToken()
 
+    const res = await fetch(
+        `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&adults=2&max=5&departureDate=${departureDate}&returnDate=${returnDate}&adults=${travellers}&max=3`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        }
+    )
+
+    const data = res.json()
+    
+    return data
+}
