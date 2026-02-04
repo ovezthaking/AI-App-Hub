@@ -1,59 +1,74 @@
 import { OPENWEATHER_API_KEY, AMADEUS_API_KEY, AMADEUS_SECRET, getAmadeusToken } from "./config"
 
-export async function getWeather(city) {
-    const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric`
-    )
-
-    const data = await res.json()
-
-    return data
+export async function getWeather({city}) {
+    try {
+        const res = await fetch(
+            `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${OPENWEATHER_API_KEY}&units=metric`
+        )
+    
+        const data = await res.json()
+    
+        return JSON.stringify(data)
+    } catch (err) {
+        console.error('Error getting weather: ', err)
+        throw new Error(err)
+    }
 }
 
 
-export async function getFlights(
+export async function getFlights({
     originLocationCode, destinationLocationCode,
     departureDate, returnDate=null, travellers
-) {
-    const token = await getAmadeusToken()
-
-    let url = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&adults=2&max=5&departureDate=${departureDate}&adults=${travellers}&max=3`
-
-    if (returnDate) {
-        url += `&returnDate=${returnDate}`
-    }
-
-    const res = await fetch(
-        url,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
+}) {
+    try {
+        const token = await getAmadeusToken()
+    
+        let url = `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${originLocationCode}&destinationLocationCode=${destinationLocationCode}&adults=2&max=5&departureDate=${departureDate}&adults=${travellers}&max=3`
+    
+        if (returnDate) {
+            url += `&returnDate=${returnDate}`
         }
-    )
-
-    const data = await res.json()
     
+        const res = await fetch(
+            url,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
     
-    return { offers: data.data, lines: data.dictionaries }
+        const data = await res.json()
+        
+        
+        return { offers: JSON.stringify(data.data), lines: JSON.stringify(data.dictionaries) }
+    } catch (err) {
+        console.error('Error getting Flights: ', err)
+        throw new Error(err)
+    }
 }
 
 
-export async function getHotels(cityCode) {
-    const token = await getAmadeusToken()
-
-    const res = await fetch(
-        `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}&radius=5`,
-        {
-            headers: {
-                Authorization: `Bearer ${token}`
-            },
-        }
-    )
-
-    const data = await res.json()
-
-    return data.data.slice(0,3)
+export async function getHotels({cityCode}) {
+    try {
+        const token = await getAmadeusToken()
+    
+        const res = await fetch(
+            `https://test.api.amadeus.com/v1/reference-data/locations/hotels/by-city?cityCode=${cityCode}&radius=5`,
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            }
+        )
+    
+        const data = await res.json()
+    
+        return JSON.stringify(data.data.slice(0,3))
+    } catch (err) {
+        console.error('Error getting hotels: ', err)
+        throw new Error(err)
+    }
 }
 
 export const tools = [
@@ -107,7 +122,7 @@ export const tools = [
     {
         type: 'function',
         function: {
-            name: 'getHotel',
+            name: 'getHotels',
             description: 'Get Hotels in the destination location',
             parameters: {
                 type: 'object',

@@ -1,8 +1,17 @@
 import { agent } from "./agent"
-import { getFlights, getHotels, getWeather } from "./tools"
 
 
 const travellersInput = document.getElementById('travellers')
+
+
+export const renderThinking = (content) => {
+    document.getElementById('thinking-text')
+        .innerHTML = content
+    
+    document.querySelector('main').classList.add('blur')
+    document.querySelector('.thinking').style.display = 'flex'
+}
+
 
 document.addEventListener('click', (e) => {
     if (e.target.id === 'plus-btn') {
@@ -33,13 +42,13 @@ document.querySelector('.main-btn').addEventListener('click', (e) => {
 
 // console.log(await getFlights('WRO', 'CDG', '2026-02-05', '2026-02-10', 2))
 // console.log(await getHotels('WRO'))
-// const prompt = `
-//     I want to travel from Wrocław to Paris
-//   on dates: from 2026-02-05 to 2026-02-10 with 2 adults.
-//   My budget is 5000.
-//   Give me WEATHER, FLIGHTS and HOTEL sections.
-// `
-// await agent(prompt)
+const prompt = `
+    I want to travel from Wrocław to Paris
+  on dates: from 2026-02-05 to 2026-02-10 with 2 adults.
+  My budget is 5000.
+  Give me WEATHER, FLIGHTS and HOTEL sections.
+`
+await agent(prompt)
 
 /*
 {

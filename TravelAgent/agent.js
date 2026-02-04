@@ -1,5 +1,13 @@
+import { renderThinking } from "."
 import { hf } from "./config"
-import { tools } from "./tools"
+import { getFlights, getHotels, getWeather, tools } from "./tools"
+
+
+const availableFunctions = {
+    getWeather,
+    getFlights,
+    getHotels
+}
 
 
 export const messages = [
@@ -22,19 +30,63 @@ export const agent = async (query) => {
         role: 'user',
         content: query
     })
+    
+
 
     const MAX_ITERATIONS = 8
 
-    // for (let i; i < MAX_ITERATIONS; i++) {
-        const res = await hf.chatCompletion({
-            model: 'XiaomiMiMo/MiMo-V2-Flash',
-            messages,
-            tools
-        })
-
-        const { finish_reason: finishReason, message } = res.choices[0]
-        
-    // }
+    for (let i = 0; i < MAX_ITERATIONS; i++) {
+        console.log(`Iteration #${i+1}`)
+        console.log(messages)
+        try {
+            const res = await hf.chatCompletion({
+                model: 'XiaomiMiMo/MiMo-V2-Flash',
+                messages,
+                tools
+            })
+    
+            const { finish_reason: finishReason, message } = res.choices[0]
+            const { tool_calls: toolCalls, content: messageContent } = message
+    
+            messages.push(message)
+            
+            if (finishReason === 'stop') {
+                messages.push({ role: 'system', content: messageContent })
+                // here I have to render this in cozy format
+                console.log('on stop: ', messageContent)
+                return
+            }
+            else if (finishReason === 'tool_calls') {
+                renderThinking(messageContent)
+    
+                for (const toolCall of toolCalls) {
+                    const functionName = toolCall.function.name
+                    const functionToCall = availableFunctions[functionName]
+                    
+                    if (!functionToCall) {
+                        console.error(`Function ${functionName} not found in availableFunctions`)
+                        continue
+                    }
+                    
+                    let functionArgs
+                    if (toolCall.function.arguments) {
+                        functionArgs = JSON.parse(toolCall.function.arguments)
+                    }
+                    const functionResponse = await functionToCall(functionArgs)
+                    
+                    messages.push({
+                        tool_call_id: toolCall.id,
+                        role: 'tool',
+                        name: functionName,
+                        content: functionResponse
+                    })
+                }
+            }
+        } catch (err) {
+            console.error('ERROR: ', err)
+            throw new Error(err)
+        }
+    }
 }
 
 
