@@ -53,6 +53,7 @@ Observation: { location: "New York City, NY", forecast: ["sunny"] }
 
 You then output:
 Answer: <Suggested activities based on sunny weather that are highly specific to New York City and surrounding areas.>
+Don't give answers in tags. Just text.
 `
 
 const messages = [
