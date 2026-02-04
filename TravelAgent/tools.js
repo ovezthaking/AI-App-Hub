@@ -41,7 +41,7 @@ export async function getFlights({
         const data = await res.json()
         
         
-        return { offers: JSON.stringify(data.data), lines: JSON.stringify(data.dictionaries) }
+        return JSON.stringify({ offers: data.data, lines: data.dictionaries })
     } catch (err) {
         console.error('Error getting Flights: ', err)
         throw new Error(err)

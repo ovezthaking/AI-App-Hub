@@ -51,7 +51,6 @@ export const agent = async (query) => {
             messages.push(message)
             
             if (finishReason === 'stop') {
-                messages.push({ role: 'system', content: messageContent })
                 // here I have to render this in cozy format
                 console.log('on stop: ', messageContent)
                 return
