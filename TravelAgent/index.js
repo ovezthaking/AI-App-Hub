@@ -1,3 +1,6 @@
+import { getWeather } from "./tools"
+
+
 const travellersInput = document.getElementById('travellers')
 
 document.addEventListener('click', (e) => {
