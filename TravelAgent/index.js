@@ -1,4 +1,3 @@
-import { getAmadeusToken } from "./config"
 import { getFlights, getHotels, getWeather } from "./tools"
 
 
