@@ -65,7 +65,7 @@ document.querySelector('form').addEventListener('submit', async (e) => {
     
     const prompt = `
     I want to travel from ${data.from} to ${data.to}
-    on dates: from ${data.fromDate} to ${data.toDate} with ${data.travellers} adults.
+    on dates: from ${data.fromDate} ${data.toDate ? 'to ' + data.toDate : 'No return'} with ${data.travellers} adults.
     My budget is ${data.budget}.
     Give me WEATHER, FLIGHTS and HOTEL sections in following format:
     <h1>Your Trip</h1>
