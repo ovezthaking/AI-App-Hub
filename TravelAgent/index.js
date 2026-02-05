@@ -2,6 +2,7 @@ import { agent } from "./agent"
 
 
 const travellersInput = document.getElementById('travellers')
+const submitBtn = document.querySelector('.main-btn')
 
 
 export const renderThinking = (content) => {
@@ -10,6 +11,18 @@ export const renderThinking = (content) => {
     
     document.querySelector('main').classList.add('blur')
     document.querySelector('.thinking').style.display = 'flex'
+}
+
+
+export const renderPostPage = (content) => {
+    const main = document.querySelector('main')
+
+    main.classList.remove('blur')
+    main.classList.add('post-page')
+    document.querySelector('.thinking').style.display = 'none'
+
+    main.innerHTML = content
+    
 }
 
 
@@ -24,31 +37,62 @@ document.addEventListener('click', (e) => {
 })
 
 
-document.querySelector('.main-btn').addEventListener('click', (e) => {
+document.querySelector('form').addEventListener('submit', async (e) => {
     e.preventDefault()
+    
+    const toDateInput = document.getElementById('to-date')
+    const fromDateInput = document.getElementById('from-date')
 
     const data = {
         travellers: travellersInput.value,
-        from: document.getElementById('from'),
-        to: document.getElementById('to'),
-        fromDate: document.getElementById('from-date'),
-        toDate: document.getElementById('to-date'),
-        budget: document.getElementById('budget')
+        from: document.getElementById('from').value,
+        to: document.getElementById('to').value,
+        fromDate: fromDateInput.value,
+        toDate: toDateInput.value,
+        budget: document.getElementById('budget').value
+    }
+
+    if (data.toDate && data.toDate < data.fromDate){
+        toDateInput.setCustomValidity('Return date can\'t be earlier than departure date')
+        toDateInput.reportValidity()
+        return
     }
     
-    console.log(data.fromDate.value)
+    toDateInput.setCustomValidity('')
     
+    submitBtn.disabled = true
+    renderThinking('Thinking...')
+    
+    const prompt = `
+    I want to travel from ${data.from} to ${data.to}
+    on dates: from ${data.fromDate} to ${data.toDate} with ${data.travellers} adults.
+    My budget is ${data.budget}.
+    Give me WEATHER, FLIGHTS and HOTEL sections in following format:
+    <h1>Your Trip</h1>
+    <div class="head-container">
+        <div class="dates"><p>→ 1st Feb 26</p><p>5th Sep 26 ←</p></div>
+        <div class="locations">ORIGIN CITY → DESTINATION CITY</div>
+    </div>
+    <h2> Weather </h2>
+    <div class="weather">WEATHER TEXT</div>
+    <h2> Flights </h2>
+    <div class="flights">FLIGHTS TEXT</div>
+    <h2> Hotel </h2>
+    <div class="hotel">HOTEL TEXT</div>
+    `
+
+    await agent(prompt)
 })
 
 // console.log(await getFlights('WRO', 'CDG', '2026-02-05', '2026-02-10', 2))
 // console.log(await getHotels('WRO'))
-const prompt = `
-    I want to travel from Wrocław to Paris
-  on dates: from 2026-02-05 to 2026-02-10 with 2 adults.
-  My budget is 5000.
-  Give me WEATHER, FLIGHTS and HOTEL sections.
-`
-await agent(prompt)
+// const prompt = `
+//     I want to travel from Wrocław to Paris
+//   on dates: from 2026-02-05 to 2026-02-10 with 2 adults.
+//   My budget is 5000.
+//   Give me WEATHER, FLIGHTS and HOTEL sections.
+// `
+// await agent(prompt)
 
 /*
 {

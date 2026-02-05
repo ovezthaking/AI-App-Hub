@@ -1,4 +1,4 @@
-import { renderThinking } from "."
+import { renderPostPage, renderThinking } from "."
 import { hf } from "./config"
 import { getFlights, getHotels, getWeather, tools } from "./tools"
 
@@ -36,8 +36,6 @@ export const agent = async (query) => {
     const MAX_ITERATIONS = 8
 
     for (let i = 0; i < MAX_ITERATIONS; i++) {
-        console.log(`Iteration #${i+1}`)
-        console.log(messages)
         try {
             const res = await hf.chatCompletion({
                 model: 'XiaomiMiMo/MiMo-V2-Flash',
@@ -51,7 +49,7 @@ export const agent = async (query) => {
             messages.push(message)
             
             if (finishReason === 'stop') {
-                // here I have to render this in cozy format
+                renderPostPage(messageContent)
                 console.log('on stop: ', messageContent)
                 return
             }
